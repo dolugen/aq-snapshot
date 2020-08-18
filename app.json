@@ -1,0 +1,12 @@
+{
+  "name": "Start on Heroku: Flask",
+  "description": "A barebones Flask app, which can easily be deployed to Heroku.",
+  "repository": "https://github.com/dolugen/flask-starter",
+  "keywords": ["python", "flask" ],
+  "env": {
+    "SECRET_KEY": {
+      "description": "The secret key for the Flask application.",
+      "generator": "secret"
+    }
+  }
+}
