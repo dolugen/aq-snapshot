@@ -2,8 +2,9 @@
 {% block content %}
 <div class="w3-container">
 <h1 class="w3-text-blue">AQ Report Sheet Generator</h1>
+
 <h2>Pick The Parameters</h2>
-<form action="/report" method="get">
+<form action="/report" method="get" class="w3-half">
     <label for="placeName"><b>Place:</b></label>
     <input class="w3-input w3-border" list="countries" type="text" id="placeName" name="placeName" required="required" placeholder="e.g. India" />
     <div class="w3-right-align">This can be a country or a city name.</div>
