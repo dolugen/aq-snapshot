@@ -39,5 +39,9 @@
     <input type="date" id="dateTo" name="dateFrom" /><br>
     <input type="submit" value="GO!" class="w3-button w3-blue w3-large w3-wide"/>
 </form>
+<script>
+    // set ending date to today by default
+    document.getElementById('dateTo').valueAsDate = new Date();
+</script>
 </div>
 {% endblock %}
