@@ -18,9 +18,19 @@ POLLUTANTS = [
     ('bc', 'Black Carbon')
 ]
 
+'''
+For demo purposes: provide input options to demonstrate autocomplete
+'''
+try:
+    with open('countries.txt') as f:
+        COUNTRIES = [name.strip() for name in f.readlines()]
+except:
+    print('Failed to read countries list.')
+    COUNTRIES = []
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', countries=COUNTRIES)
 
 @app.route('/report')
 def report():

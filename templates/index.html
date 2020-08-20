@@ -5,8 +5,14 @@
 <h2>Pick The Parameters</h2>
 <form action="/report" method="get">
     <label for="placeName">Place:</label>
-    <input type="text" id="placeName" name="placeName" placeholder="e.g. Delhi" />(This can be a city or a country)<br/>
-    <label for="time">Averaging Time:</label>
+    <input list="countries" type="text" id="placeName" name="placeName" required="required" placeholder="e.g. India" />(This can be a country or a city name)<br/>
+    <datalist id="countries">
+    {% for country in countries %}
+        <option value="{{ country }}">
+    {% endfor %}
+    </datalist>
+
+    <label for="time">Averaging Time Interval:</label>
     <select id="time" name="time">
         <option value="monthly">Monthly</option>
         <option value="weekly" selected="selected">Weekly</option>
