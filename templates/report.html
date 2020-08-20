@@ -2,10 +2,19 @@
 {% block head %}
 <script src='https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js'></script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css' rel='stylesheet' />
+<style>
+    .ok-feedback {
+        color: green;
+    }
+</style>
 {% endblock %}
 {% block content %}
 <h1>AQ Report Sheet Generator</h1>
-<h2>Here's Your Report for Charlotte, NC, US</h2>
+<div id="share">
+    Share this page:
+    <input type="text" id="currentURL" readonly="readonly"><button onclick="copyLink()">Copy link</button> 
+</div>
+<h2>Here's Your Report for {{ place_name }}</h2>
 <details>
 <summary>[DEBUG] Your request parameters (click to expand)</summary>
 <ul>
@@ -44,5 +53,35 @@
             trackUserLocation: true
         })
     );
+
+    document.getElementById("currentURL").value= window.location.href;
+
+    function copyLink() {
+        /* Get the text field */
+        var copyText = document.getElementById("currentURL");
+
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+
+        /* Notify the copied text */
+        console.log("Copied to clipboard: " + copyText.value);
+        
+        // show text feedback
+        var shareWidget = document.getElementById("share");
+        var feedback = document.createElement("span");
+        feedback.classList.add("ok-feedback");
+        var feedbackText = document.createTextNode("Copied!");
+        feedback.appendChild(feedbackText);
+        shareWidget.appendChild(feedback); 
+
+        // hide text feedback after a few moments
+        setInterval(function() {
+            feedback.remove();
+        }, 3000);
+    } 
 </script>
 {% endblock %}
