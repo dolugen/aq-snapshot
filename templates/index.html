@@ -1,42 +1,62 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="w3-container">
-<h1>AQ Report Sheet Generator</h1>
+<h1 class="w3-text-blue">AQ Report Sheet Generator</h1>
 <h2>Pick The Parameters</h2>
 <form action="/report" method="get">
-    <label for="placeName">Place:</label>
-    <input list="countries" type="text" id="placeName" name="placeName" required="required" placeholder="e.g. India" />(This can be a country or a city name)<br/>
+    <label for="placeName"><b>Place:</b></label>
+    <input class="w3-input w3-border" list="countries" type="text" id="placeName" name="placeName" required="required" placeholder="e.g. India" />
+    <div class="w3-right-align">This can be a country or a city name.</div>
     <datalist id="countries">
     {% for country in countries %}
         <option value="{{ country }}">
     {% endfor %}
     </datalist>
 
-    <label for="time">Averaging Time Interval:</label>
-    <select id="time" name="time">
+    <label for="time"><b>Averaging Time Interval:</b></label>
+    <select id="time" name="time" class="w3-input w3-border">
         <option value="monthly" selected="selected">Monthly</option>
         <option value="weekly">Weekly</option>
         <option value="hourly">Hourly</option>
-    </select> (This is for choosing how detailed the data should be)<br/>
-    <label for="pollutants">Pollutants (You can pick any number of pollutants)</label><br>
-    <input type="checkbox" value="pm25" id="pm25" name="pm25" checked="checked" />
-    <label for="pm25">PM2.5</label><br>
-    <input type="checkbox" value="pm10" id="pm10" name="pm10" checked="checked" />
-    <label for="pm10">PM10</label><br>
-    <input type="checkbox" value="co" id="co" name="co" checked="checked" />
-    <label for="pm25">CO</label><br>
-    <input type="checkbox" value="o3" id="o3" name="o3" checked="checked" />
-    <label for="pm10">O<sub>3</sub></label><br>
-    <input type="checkbox" value="no2" id="no2" name="no2" checked="checked" />
-    <label for="pm25">NO<sub>2</sub></label><br>
-    <input type="checkbox" value="so2" id="so2" name="so2" checked="checked" />
-    <label for="pm25">SO<sub>2</sub></label><br>
-    <input type="checkbox" value="bc" id="bc" name="bc" checked="checked" />
-    <label for="pm10">BC</label><br>
-    <label for="dateFrom">Date starting at</label>
-    <input type="date" id="dateFrom" name="dateFrom" /> (This is for defining the range of data you want to look at)<br>
-    <label for="dateTo">Until</label>
-    <input type="date" id="dateTo" name="dateTo" /><br>
+    </select>
+    <div class="w3-right-align">This is for choosing how detailed the data should be.</div>
+
+    <label for="pollutants"><b>Pollutants</b></label>
+    <div>
+        <input type="checkbox" value="pm25" id="pm25" name="pm25" checked="checked" class="w3-check"/>
+        <label for="pm25">PM2.5</label>
+    </div>
+    <div>
+        <input type="checkbox" value="pm10" id="pm10" name="pm10" checked="checked" class="w3-check"/>
+        <label for="pm10">PM10</label>
+    </div>
+    <div>
+        <input type="checkbox" value="co" id="co" name="co" checked="checked" class="w3-check" />
+        <label for="pm25">CO</label><br>
+    </div>
+    <div>
+        <input type="checkbox" value="o3" id="o3" name="o3" checked="checked" class="w3-check"/>
+        <label for="pm10">O<sub>3</sub></label><br>
+    </div>
+    <div>
+        <input type="checkbox" value="no2" id="no2" name="no2" checked="checked" class="w3-check"/>
+        <label for="pm25">NO<sub>2</sub></label><br>
+    </div>
+    <div>
+        <input type="checkbox" value="so2" id="so2" name="so2" checked="checked" class="w3-check"/>
+        <label for="pm25">SO<sub>2</sub></label><br>
+    </div>
+    <div>
+        <input type="checkbox" value="bc" id="bc" name="bc" checked="checked" class="w3-check" />
+        <label for="pm10">BC</label><br>
+    </div>
+    <div>
+        <label for="dateFrom"><b>Date starting at</b></label>
+        <input type="date" id="dateFrom" name="dateFrom" class="w3-input w3-border" />
+        <label for="dateTo"><b>Until</b></label>
+        <input type="date" id="dateTo" name="dateTo" class="w3-input w3-border" />
+        <div class="w3-right-align">This is for defining the range of data you want to look at.</div>
+    </div>
     <input type="submit" value="GO!" class="w3-button w3-blue w3-large w3-wide"/>
 </form>
 <script>
