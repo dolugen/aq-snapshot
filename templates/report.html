@@ -9,10 +9,11 @@
 </style>
 {% endblock %}
 {% block content %}
+<div class="w3-container">
 <h1>AQ Report Sheet Generator</h1>
 <div id="share">
     Share this page:
-    <input type="text" id="currentURL" readonly="readonly"><button onclick="copyLink()">Copy link</button> 
+    <input type="text" id="currentURL" readonly="readonly"><button onclick="copyLink()" class="w3-button w3-border">Copy link</button> 
 </div>
 <h2>Here's Your Report for {{ place_name }}</h2>
 <details>
@@ -33,8 +34,8 @@
     <h3>Map of sensor locations</h3>
     <div id='map' style='width: 400px; height: 300px;'></div>
     <h3>Download options</h3>
-    <button>Download Report -></button>
-    <button>Download Data -></button>
+    <button class="w3-button w3-blue">Download Report -></button>
+    <button class="w3-button w3-blue">Download Data -></button>
     <h3>Learn More</h3>
     <a href="/resources">Learn More</a>
 </div>
@@ -84,4 +85,5 @@
         }, 3000);
     } 
 </script>
+</div>
 {% endblock %}

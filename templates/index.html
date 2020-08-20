@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="w3-container">
 <h1>AQ Report Sheet Generator</h1>
 <h2>Pick The Parameters</h2>
 <form action="/report" method="get">
@@ -30,6 +31,7 @@
     <input type="date" id="dateFrom" name="dateFrom" /> (This is for defining the range of data you want to look at)<br>
     <label for="dateTo">Until</label>
     <input type="date" id="dateTo" name="dateFrom" /><br>
-    <input type="submit" value="GO!" />
+    <input type="submit" value="GO!" class="w3-button w3-blue w3-large w3-wide"/>
 </form>
+</div>
 {% endblock %}
