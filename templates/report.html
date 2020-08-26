@@ -53,6 +53,7 @@
       var ctx = document.getElementById("myChart");
       var myChart = new Chart(ctx, {
         type: "bar",
+        // placeholder data!
         data: {
           labels: [
             "Jan",
@@ -133,18 +134,25 @@
   <script>
     mapboxgl.accessToken = "{{ mapbox_access_token }}";
     var map = new mapboxgl.Map({
-      container: "map",
-      style: "mapbox://styles/mapbox/streets-v11",
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [12.550343, 55.665957],
+        zoom: 9
     });
-    map.addControl(new mapboxgl.NavigationControl());
-    map.addControl(
-      new mapboxgl.GeolocateControl({
-        positionOptions: {
-          enableHighAccuracy: true,
-        },
-        trackUserLocation: true,
-      })
-    );
+    
+    // placeholder markers
+    var stations = [
+        [12.57111, 55.66919],
+        [12.55333, 55.69836],
+        [12.57111, 55.6743],
+        [12.56141, 55.70028],
+        [12.46332, 55.63198]
+    ];
+    stations.forEach(station => {
+        var marker = new mapboxgl.Marker()
+            .setLngLat(station)
+            .addTo(map);
+    });
 
     document.getElementById("currentURL").value = window.location.href;
 
