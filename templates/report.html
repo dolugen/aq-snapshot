@@ -1,89 +1,180 @@
 {% extends "base.html" %}
+
 {% block head %}
-<script src='https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js'></script>
-<link href='https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css' rel='stylesheet' />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js"></script>
+<link
+  href="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css"
+  rel="stylesheet"
+/>
 <style>
-    .ok-feedback {
-        color: green;
-    }
+  .ok-feedback {
+    color: green;
+  }
+  .chart-wrapper {
+    width: 400px;
+    height: 400px;
+  }
 </style>
 {% endblock %}
+
 {% block content %}
 <div class="w3-container">
-<h1 class="w3-text-blue">AQ Report Sheet Generator</h1>
-<div id="share">
+  <h1 class="w3-text-blue">AQ Report Sheet Generator</h1>
+  <div id="share">
     Share this page:
-    <input type="text" id="currentURL" readonly="readonly"><button onclick="copyLink()" class="w3-button w3-border">Copy link</button> 
-</div>
-<h2>Here's Your Report for {{ place_name }}</h2>
-<details>
-<summary>[DEBUG] Your request parameters (click to expand)</summary>
-<ul>
-    <li>Place: {{ place_name }}</li>
-    <li>Averaging Time: {{ averaging_time }}</li>
-    <li>Pollutants: {{ pollutants }}</li>
-    <li>Date Starting: {{ date_from }}</li>
-    <li>Date Ending: {{ date_to }}</li>
-</ul>
-</details>
-<div>
+    <input type="text" id="currentURL" readonly="readonly" /><button
+      onclick="copyLink()"
+      class="w3-button w3-border"
+    >
+      Copy link
+    </button>
+  </div>
+  <h2>Here's Your Report for {{ place_name }}</h2>
+  <details>
+    <summary>[DEBUG] Your request parameters (click to expand)</summary>
+    <ul>
+      <li>Place: {{ place_name }}</li>
+      <li>Averaging Time: {{ averaging_time }}</li>
+      <li>Pollutants: {{ pollutants }}</li>
+      <li>Date Starting: {{ date_from }}</li>
+      <li>Date Ending: {{ date_to }}</li>
+    </ul>
+  </details>
+  <div>
     <h3>Stats</h3>
     <p>To be added...</p>
     <h3>Charts</h3>
-    <p>To be added...</p>
+    <p>(Placeholder)</p>
+    <div class="chart-wrapper">
+      <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+    <script>
+      var ctx = document.getElementById("myChart");
+      var myChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ],
+          datasets: [
+            {
+              label: "PM2.5 (ppm)",
+              data: [12, 10, 7, 5, 4, 3, 2, 2, 4, 8, 10, 11],
+              backgroundColor: [
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 206, 86, 0.2)",
+                "rgba(75, 192, 192, 0.2)",
+                "rgba(75, 192, 192, 0.2)",
+                "rgba(75, 192, 192, 0.2)",
+                "rgba(75, 192, 192, 0.2)",
+                "rgba(75, 192, 192, 0.2)",
+                "rgba(75, 192, 192, 0.2)",
+                "rgba(255, 206, 86, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(255, 99, 132, 0.2)",
+              ],
+              borderColor: [
+                "rgba(255, 99, 132, 1)",
+                "rgba(255, 99, 132, 1)",
+                "rgba(255, 206, 86, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(255, 206, 86, 1)",
+                "rgba(255, 99, 132, 1)",
+                "rgba(255, 99, 132, 1)",
+              ],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                },
+              },
+            ],
+          },
+          title: {
+            display: true,
+            text: "Monthly Averages of 2019",
+          },
+        },
+      });
+    </script>
     <h3>Map of sensor locations</h3>
-    <div id='map' style='width: 400px; height: 300px;'></div>
+    <p>(Placeholder)</p>
+    <div id="map" style="width: 400px; height: 300px;"></div>
     <h3>Download options</h3>
     <button class="w3-button w3-blue">Download Report -></button>
     <button class="w3-button w3-blue">Download Data -></button>
     <h3>Learn More</h3>
     <a href="/resources">Learn More</a>
-</div>
-<script>
-    mapboxgl.accessToken = '{{ mapbox_access_token }}';
+  </div>
+  <script>
+    mapboxgl.accessToken = "{{ mapbox_access_token }}";
     var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11'
+      container: "map",
+      style: "mapbox://styles/mapbox/streets-v11",
     });
     map.addControl(new mapboxgl.NavigationControl());
     map.addControl(
-        new mapboxgl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: true
-            },
-            trackUserLocation: true
-        })
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+      })
     );
 
-    document.getElementById("currentURL").value= window.location.href;
+    document.getElementById("currentURL").value = window.location.href;
 
     function copyLink() {
-        /* Get the text field */
-        var copyText = document.getElementById("currentURL");
+      /* Get the text field */
+      var copyText = document.getElementById("currentURL");
 
-        /* Select the text field */
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+      /* Select the text field */
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); /*For mobile devices*/
 
-        /* Copy the text inside the text field */
-        document.execCommand("copy");
+      /* Copy the text inside the text field */
+      document.execCommand("copy");
 
-        /* Notify the copied text */
-        console.log("Copied to clipboard: " + copyText.value);
-        
-        // show text feedback
-        var shareWidget = document.getElementById("share");
-        var feedback = document.createElement("span");
-        feedback.classList.add("ok-feedback");
-        var feedbackText = document.createTextNode("Copied!");
-        feedback.appendChild(feedbackText);
-        shareWidget.appendChild(feedback); 
+      /* Notify the copied text */
+      console.log("Copied to clipboard: " + copyText.value);
 
-        // hide text feedback after a few moments
-        setInterval(function() {
-            feedback.remove();
-        }, 3000);
-    } 
-</script>
+      // show text feedback
+      var shareWidget = document.getElementById("share");
+      var feedback = document.createElement("span");
+      feedback.classList.add("ok-feedback");
+      var feedbackText = document.createTextNode("Copied!");
+      feedback.appendChild(feedbackText);
+      shareWidget.appendChild(feedback);
+
+      // hide text feedback after a few moments
+      setInterval(function () {
+        feedback.remove();
+      }, 3000);
+    }
+  </script>
 </div>
 {% endblock %}
