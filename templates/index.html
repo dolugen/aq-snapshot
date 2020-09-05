@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block content %}
 <div class="w3-container">
 <h1 class="w3-text-blue">AQ Report Sheet Generator</h1>
@@ -6,13 +7,11 @@
 <h2>Pick The Parameters</h2>
 <form action="/report" method="get" class="w3-half">
     <label for="placeName"><b>Place:</b></label>
-    <input class="w3-input w3-border" list="countries" type="text" id="placeName" name="placeName" required="required" placeholder="e.g. India" />
+    <input class="w3-input w3-border" list="countries" type="text" id="placeName" name="placeName" required="required" placeholder="e.g. India" autocomplete="off" />
     <div class="w3-right-align">This can be a country or a city name.</div>
-    <datalist id="countries">
-    {% for country in countries %}
-        <option value="{{ country }}">
-    {% endfor %}
-    </datalist>
+    <ul id="suggestions" class="w3-ul w3-hoverable">
+        <li class="suggested-item"></li>
+    </ul>
 
     <label for="time"><b>Averaging Time Interval:</b></label>
     <select id="time" name="time" class="w3-input w3-border">
@@ -63,6 +62,55 @@
 <script>
     // set ending date to today by default
     document.getElementById('dateTo').valueAsDate = new Date();
+
+    const places_url = "{{ url_for('static', filename='places.json') }}";
+    const places = [];
+
+    fetch(places_url)
+        .then(blob => blob.json())
+        .then(data => places.push(...data.places));
+
+    function findPlace(nameToMatch, data) {
+        const regex = new RegExp(nameToMatch, 'gi');
+        const matches = data.filter(item => item.name && item.name.match(regex));
+        
+        return matches;
+    }
+
+    // called on the search input changes
+    function displayMatchedPlaces() {
+        // don't do when there's no value
+        if (this.value.length == 0) return;
+
+        const result = findPlace(this.value, places);
+        const html = result.map(place => {
+            return `
+                <li class="suggested-item"
+                    data-name="${place.name}"
+                    data-id="${place.id}"
+                    data-type="${place.type}">
+                    <span class="suggestion-name">${place.name}</span>
+                </li>
+            `;
+        }).join('');
+        suggestions.innerHTML = html;
+
+        const suggestedItems = document.querySelectorAll(".suggested-item");
+        suggestedItems.forEach(i => i.addEventListener('click', function() {
+            document.querySelector('#placeName').value = this.dataset.name;
+            // todo: also set hidden form fields
+            console.log(this.dataset.name)
+
+            // reset suggestions list
+            suggestions.innerHTML = '';
+        }));
+    }
+
+    const searchInput = document.querySelector('#placeName');
+    const suggestions = document.querySelector('#suggestions');
+
+    searchInput.addEventListener('change', displayMatchedPlaces);
+    searchInput.addEventListener('keyup', displayMatchedPlaces);
 </script>
 </div>
 {% endblock %}
