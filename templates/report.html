@@ -56,23 +56,19 @@
         // placeholder data!
         data: {
           labels: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
+            {% for avg in averages %}
+            '{{ avg.date }}',
+            {% endfor %}
           ],
           datasets: [
             {
               label: "PM2.5 (ppm)",
-              data: [12, 10, 7, 5, 4, 3, 2, 2, 4, 8, 10, 11],
+              data: [
+                {% for avg in averages %}
+                {{ avg.average }},
+                {% endfor %}
+              ],
+              // TODO: customize color based on the avg value
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
                 "rgba(255, 99, 132, 0.2)",
@@ -117,7 +113,7 @@
           },
           title: {
             display: true,
-            text: "Monthly Averages of 2019",
+            text: "{{ chart_title }}",
           },
         },
       });

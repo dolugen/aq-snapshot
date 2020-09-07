@@ -2,6 +2,8 @@ import os
 from flask import Flask
 from flask import render_template
 from flask import request
+import requests
+
 app = Flask(__name__)
 
 MAPBOX_ACCESS_TOKEN = os.environ.get('MAPBOX_ACCESS_TOKEN')
@@ -18,31 +20,61 @@ POLLUTANTS = [
     ('bc', 'Black Carbon')
 ]
 
-'''
-For demo purposes: provide input options to demonstrate autocomplete
-'''
-try:
-    with open('countries.txt') as f:
-        COUNTRIES = [name.strip() for name in f.readlines()]
-except:
-    print('Failed to read countries list.')
-    COUNTRIES = []
+AVERAGES_URL = "https://api.openaq.org/beta/averages"
+
+
+def get_averages(temporal='day', spatial='location', location=None, city=None, country=None):
+    '''makes an API call to OpenAQ averages endpoint, and returns the results'''
+    params = {
+        'temporal': temporal,
+        'spatial': spatial,
+        'country': country,
+        'city': city,
+        'location': location,
+        'order_by': 'date',
+        'sort': 'asc'
+    }
+    params = '&'.join([f'{k}={v}' for (k, v) in params.items() if v is not None])
+    print(params)
+
+    resp = requests.get(f'{AVERAGES_URL}?{params}')
+    averages = resp.json()["results"]
+    return averages
 
 @app.route('/')
 def index():
-    return render_template('index.html', countries=COUNTRIES)
+    return render_template('index.html')
 
 @app.route('/report')
 def report():
     place_name = request.args.get('placeName')
-    averaging_time = request.args.get('time')
+    place_type = request.args.get('placeType')
+    place_id = request.args.get('placeID')
+    assert place_type in ["country", "city", "location"]
+    averaging_time = request.args.get('temporal')
+    assert averaging_time in ["year", "month", "day"]
+
     pollutants = {}
     for pollutant, _ in POLLUTANTS: 
         pollutants[pollutant] = bool(request.args.get(pollutant))
+    
     date_from = request.args.get('dateFrom')
     date_to = request.args.get('dateTo')
 
+    # TODO: use date range here
+    averages = get_averages(
+        temporal=averaging_time, 
+        spatial=place_type, 
+        **{place_type: place_id or place_name})
+    print(averages)
+
+    # TODO: other parameters will be available too
+    # TODO: suffix place name with context (e.g. city_name, country_name)
+    chart_title = f'{averaging_time.capitalize()}ly average PM2.5 for {place_name}'
+
     return render_template('report.html',
+                            averages=averages,
+                            chart_title=chart_title,
                             place_name=place_name,
                             averaging_time=averaging_time,
                             pollutants=pollutants,
