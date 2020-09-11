@@ -121,8 +121,9 @@
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [{{ locations.0.coordinates.longitude }}, {{ locations.0.coordinates.latitude }}], // TODO: set center to place
-        zoom: 4 // TODO: depends on the place type
+        zoom: {{ map_zoom_level }}
     });
+    map.addControl(new mapboxgl.FullscreenControl());
     
     // placeholder markers
     var stations = [

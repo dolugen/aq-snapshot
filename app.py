@@ -84,6 +84,10 @@ def report():
     for pollutant, _ in POLLUTANTS: 
         pollutants[pollutant] = bool(request.args.get(pollutant))
     
+    zoom_level = 9
+    if place_type == "country":
+        zoom_level = 4
+    
     date_from = request.args.get('dateFrom')
     date_to = request.args.get('dateTo')
 
@@ -114,6 +118,7 @@ def report():
                             pollutants=pollutants,
                             date_from=date_from,
                             date_to=date_to,
+                            map_zoom_level=zoom_level,
                             mapbox_access_token=MAPBOX_ACCESS_TOKEN)
 
 @app.route('/resources')
