@@ -86,12 +86,13 @@
 
         const result = findPlace(this.value, places);
         const html = result.map(place => {
+            const place_full_name = [place.name, place.city, place.country].filter(p => p).join(', ');
             return `
                 <li class="suggested-item"
                     data-name="${place.name}"
                     data-id="${place.id || ''}"
                     data-type="${place.type}">
-                    <span class="suggestion-name">${place.name}</span>
+                    <span class="suggestion-name">${place_full_name}</span>
                 </li>
             `;
         }).join('');

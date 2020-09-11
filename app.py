@@ -21,6 +21,7 @@ POLLUTANTS = [
 ]
 
 AVERAGES_URL = "https://api.openaq.org/beta/averages"
+LOCATIONS_URL = "https://api.openaq.org/v1/locations"
 
 
 def get_averages(temporal='day', spatial='location', location=None, city=None, country=None):
@@ -40,6 +41,29 @@ def get_averages(temporal='day', spatial='location', location=None, city=None, c
     resp = requests.get(f'{AVERAGES_URL}?{params}')
     averages = resp.json()["results"]
     return averages
+
+def get_locations(country=None, city=None):
+    '''
+    makes an API call to OpenAQ locations endpoint
+    and returns the results
+    '''
+    params = {
+        'country': country,
+        'city': city
+    }
+    params = '&'.join([f'{k}={v}' for (k, v) in params.items() if v is not None])
+    resp = requests.get(f'{LOCATIONS_URL}?{params}')
+    locations = resp.json()["results"]
+    return locations
+
+
+def find_place_coordinates(name, place_type):
+    '''
+    Ask Mapbox for the center coordinates for a city or a country.
+    Used to center the map on the report page.
+    '''
+    pass
+
 
 @app.route('/')
 def index():
@@ -68,12 +92,19 @@ def report():
         **{place_type: place_id or place_name})
     print(averages)
 
+    if place_type == "country":
+        locations = get_locations(country=place_id)
+    # TODO: city name not unique?
+    elif place_type == "city":
+        locations = get_locations(city=place_name)
+
     # TODO: other parameters will be available too
     # TODO: suffix place name with context (e.g. city_name, country_name)
     chart_title = f'{averaging_time.capitalize()}ly average PM2.5 for {place_name}'
 
     return render_template('report.html',
                             averages=averages,
+                            locations=locations,
                             chart_title=chart_title,
                             place_name=place_name,
                             averaging_time=averaging_time,

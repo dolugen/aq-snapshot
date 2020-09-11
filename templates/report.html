@@ -108,7 +108,6 @@
       });
     </script>
     <h3>Map of sensor locations</h3>
-    <p>(Placeholder)</p>
     <div id="map" style="width: 600px; height: 400px;"></div>
     <h3>Download options</h3>
     <button class="w3-button w3-blue">Download Report -></button>
@@ -121,17 +120,15 @@
     var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: [12.550343, 55.665957],
-        zoom: 9
+        center: [{{ locations.0.coordinates.longitude }}, {{ locations.0.coordinates.latitude }}], // TODO: set center to place
+        zoom: 4 // TODO: depends on the place type
     });
     
     // placeholder markers
     var stations = [
-        [12.57111, 55.66919],
-        [12.55333, 55.69836],
-        [12.57111, 55.6743],
-        [12.56141, 55.70028],
-        [12.46332, 55.63198]
+      {% for location in locations %}
+      [ {{ location.coordinates.longitude }}, {{ location.coordinates.latitude }} ],
+      {% endfor %}
     ];
     stations.forEach(station => {
         var marker = new mapboxgl.Marker()
