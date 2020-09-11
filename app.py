@@ -52,7 +52,9 @@ def get_locations(country=None, city=None):
         'city': city
     }
     params = '&'.join([f'{k}={v}' for (k, v) in params.items() if v is not None])
-    resp = requests.get(f'{LOCATIONS_URL}?{params}')
+    url = f'{LOCATIONS_URL}?{params}&has_geo=true&limit=10000'
+    print(url)
+    resp = requests.get(url)
     locations = resp.json()["results"]
     return locations
 
@@ -97,6 +99,7 @@ def report():
     # TODO: city name not unique?
     elif place_type == "city":
         locations = get_locations(city=place_name)
+    print(f'Got {len(locations)} locations')
 
     # TODO: other parameters will be available too
     # TODO: suffix place name with context (e.g. city_name, country_name)
