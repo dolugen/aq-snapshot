@@ -21,15 +21,6 @@
 {% block content %}
 <div class="w3-container">
   <h1 class="w3-text-blue">AQ Report Sheet Generator</h1>
-  <div id="share">
-    Share this page:
-    <input type="text" id="currentURL" readonly="readonly" /><button
-      onclick="copyLink()"
-      class="w3-button w3-border"
-    >
-      Copy link
-    </button>
-  </div>
   <h2>Here's Your Report for {{ place_name }}</h2>
   <div>
     <h3>Stats</h3>
@@ -110,10 +101,19 @@
     <h3>Map of sensor locations</h3>
     <div id="map" style="width: 600px; height: 400px;"></div>
     <h3>Download options</h3>
-    <button class="w3-button w3-blue">Download Report -></button>
-    <button class="w3-button w3-blue">Download Data -></button>
+    <button class="w3-button w3-blue w3-hover-green">Download Report »</button>
+    <button class="w3-button w3-blue w3-hover-green">Download Data »</button>
     <h3>Learn More</h3>
     <a href="/resources">Learn More</a>
+    <div id="share">
+      <h3>Share this page</h3>
+      <input type="text" id="currentURL" readonly="readonly" /><button
+        onclick="copyLink()"
+        class="w3-button w3-border w3-hover-green"
+      >
+        Copy link
+      </button>
+    </div>
   </div>
   <script>
     mapboxgl.accessToken = "{{ mapbox_access_token }}";

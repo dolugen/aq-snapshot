@@ -1,15 +1,16 @@
 <!DOCTYPE html>
     <head>
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
         {% block head %}
         {% endblock %}
     </head>
     <body>
-        <ul class="w3-bar w3-light-grey">
-            <li class="w3-bar-item w3-button"><a href="/">Start Here</a></li>
-            <li class="w3-bar-item w3-button"><a href="/resources">Resources</a></li>
-        </ul>
+        <div class="w3-bar w3-blue">
+            <a class="w3-bar-item w3-button w3-hover-green" href="/"><i class="fa fa-home w3-large"></i> Start Here</a>
+            <a class="w3-bar-item w3-button w3-hover-green" href="/resources"><i class="fa fa-star w3-large"></i> Resources</a>
+        </div>
         {% block content %}{% endblock %}
     </body>
 </html>
