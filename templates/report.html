@@ -23,27 +23,33 @@
   <h1 class="w3-text-blue">AQ Report Sheet Generator</h1>
   <h2>Here's Your Report for {{ place_name }}</h2>
   <div>
-    <h3>Stats</h3>
-    <p>To be added...</p>
+    <div class="w3-row">
+      <div class="w3-col m7">
+        <p>Insert stats here</p>
+      </div>
+      <div class="w3-col m5">
+        <div class="w3-right">
+          <button class="w3-button w3-blue w3-hover-green">Download Report »</button>
+          <button class="w3-button w3-blue w3-hover-green">Download Data »</button>
+          <button class="w3-button w3-blue w3-hover-green"><a href="/resources">Learn More</a></button>
+        </div>
+      </div>
+    </div> 
+
     <div class="w3-cell-row">
 
       <div class="w3-container w3-cell">
         <div class="chart-wrapper">
-          <canvas id="myChart" width="600" height="400"></canvas>
+          <canvas id="myChart" width="650" height="400"></canvas>
         </div>
       </div>
     
-      <div class="w3-container w3-cell">
-        <div id="map" style="width: 600px; height: 400px;"></div>
+      <div class="w3-container w3-cell" style="padding-right: 0px;">
+        <div id="map" class="w3-right" style="width: 700px; height: 400px;"></div>
       </div>
     
     </div> 
 
-    <h3>Download options</h3>
-    <button class="w3-button w3-blue w3-hover-green">Download Report »</button>
-    <button class="w3-button w3-blue w3-hover-green">Download Data »</button>
-    <h3>Learn More</h3>
-    <a href="/resources">Learn More</a>
     <div id="share">
       <h3>Share this page</h3>
       <input type="text" id="currentURL" readonly="readonly" /><button
