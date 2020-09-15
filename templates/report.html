@@ -25,81 +25,20 @@
   <div>
     <h3>Stats</h3>
     <p>To be added...</p>
-    <h3>Charts</h3>
-    <div class="chart-wrapper">
-      <canvas id="myChart" width="600" height="400"></canvas>
-    </div>
-    <script>
-      var ctx = document.getElementById("myChart");
-      var myChart = new Chart(ctx, {
-        type: "bar",
-        // placeholder data!
-        data: {
-          labels: [
-            {% for avg in averages %}
-            '{{ avg.date }}',
-            {% endfor %}
-          ],
-          datasets: [
-            {
-              label: "PM2.5 (ppm)",
-              data: [
-                {% for avg in averages %}
-                {{ avg.average }},
-                {% endfor %}
-              ],
-              // TODO: customize color based on the avg value
-              backgroundColor: [
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(255, 206, 86, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(255, 206, 86, 0.2)",
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(255, 99, 132, 0.2)",
-              ],
-              borderColor: [
-                "rgba(255, 99, 132, 1)",
-                "rgba(255, 99, 132, 1)",
-                "rgba(255, 206, 86, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(255, 206, 86, 1)",
-                "rgba(255, 99, 132, 1)",
-                "rgba(255, 99, 132, 1)",
-              ],
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                },
-              },
-            ],
-          },
-          title: {
-            display: true,
-            text: "{{ chart_title }}",
-          },
-        },
-      });
-    </script>
-    <h3>Map of sensor locations</h3>
-    <div id="map" style="width: 600px; height: 400px;"></div>
+    <div class="w3-cell-row">
+
+      <div class="w3-container w3-cell">
+        <div class="chart-wrapper">
+          <canvas id="myChart" width="600" height="400"></canvas>
+        </div>
+      </div>
+    
+      <div class="w3-container w3-cell">
+        <div id="map" style="width: 600px; height: 400px;"></div>
+      </div>
+    
+    </div> 
+
     <h3>Download options</h3>
     <button class="w3-button w3-blue w3-hover-green">Download Report »</button>
     <button class="w3-button w3-blue w3-hover-green">Download Data »</button>
@@ -116,6 +55,76 @@
     </div>
   </div>
   <script>
+    // begin chart
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+      type: "bar",
+      // placeholder data!
+      data: {
+        labels: [
+          {% for avg in averages %}
+          '{{ avg.date }}',
+          {% endfor %}
+        ],
+        datasets: [
+          {
+            label: "PM2.5 (ppm)",
+            data: [
+              {% for avg in averages %}
+              {{ avg.average }},
+              {% endfor %}
+            ],
+            // TODO: customize color based on the avg value
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(255, 99, 132, 0.2)",
+            ],
+            borderColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(255, 99, 132, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(255, 99, 132, 1)",
+              "rgba(255, 99, 132, 1)",
+            ],
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
+        title: {
+          display: true,
+          text: "{{ chart_title }}",
+        },
+      },
+    });
+
+    // begin map
     mapboxgl.accessToken = "{{ mapbox_access_token }}";
     var map = new mapboxgl.Map({
         container: 'map',
