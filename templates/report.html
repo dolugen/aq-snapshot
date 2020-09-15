@@ -20,7 +20,7 @@
 
 {% block content %}
 <div class="w3-container">
-  <h1 class="w3-text-blue">AQ Report Sheet Generator</h1>
+  <h1 class="w3-text-blue">AQ Report Sheet</h1>
   <h2>Here's Your Report for {{ place_name }}</h2>
   <div>
     <div class="w3-row">
@@ -52,12 +52,8 @@
 
     <div id="share">
       <h3>Share this page</h3>
-      <input type="text" id="currentURL" readonly="readonly" /><button
-        onclick="copyLink()"
-        class="w3-button w3-border w3-hover-green"
-      >
-        Copy link
-      </button>
+      <input type="text" id="currentURL" readonly="readonly" />
+      <button onclick="copyLink()" class="w3-button w3-border w3-hover-green">Copy link</button>
     </div>
   </div>
   <script>
