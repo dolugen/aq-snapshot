@@ -96,6 +96,10 @@ def count_poor_aqi_intervals(averages):
     return poor_aqi_intervals
 
 def prepare_stats(averages, averaging_interval, locations):
+    # some places might not have averages ready
+    if not averages:
+        return []
+
     # number of intervals below threshold
     poor_aqi_intervals = count_poor_aqi_intervals(averages)
     
