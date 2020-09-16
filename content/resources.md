@@ -7,7 +7,7 @@ Air inequality is the unequal access to clean air. Over 90% of the world's popul
 ### PM2.5 particles
 are small enough to get into the lungs and blood stream, leading to lung and heart problems, including asthma, cancers, stroke and premature death.
 
-![Image 1](https://www.epa.gov/sites/production/files/2016-09/pm2.5_scale_graphic-color_2.jpg)
+![Image 1](/static/pm2.5_scale.jpg)
 
 It can come from airborne particles such as smoke, dust, dirt, soot, and salt. [(EPA)](https://www.epa.gov/pm-pollution/health-and-environmental-effects-particulate-matter-pm)
 
