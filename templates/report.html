@@ -33,8 +33,12 @@
       </div>
       <div class="w3-col m7">
         <div class="w3-right">
-          <button class="w3-button w3-blue w3-hover-green">Download Report »</button>
-          <button class="w3-button w3-blue w3-hover-green">Download Data »</button>
+          <!-- <button class="w3-button w3-blue w3-hover-green">Download Report »</button>
+          <button class="w3-button w3-blue w3-hover-green">Download Data »</button> -->
+          <div id="share" style="display:inline">
+            <button id="copyPageLink" onclick="copyLink()" class="w3-button w3-border">Copy page link</button>
+            <input style="display:none" id="currentURL" readonly="readonly" />
+          </div>
           <button class="w3-button w3-blue w3-hover-green"><a href="/resources">Learn More</a></button>
         </div>
       </div>
@@ -53,12 +57,6 @@
       </div>
     
     </div> 
-
-    <div id="share">
-      <h3>Share this page</h3>
-      <input type="text" id="currentURL" readonly="readonly" />
-      <button onclick="copyLink()" class="w3-button w3-border w3-hover-green">Copy link</button>
-    </div>
   </div>
   <script>
     // begin chart
@@ -139,16 +137,12 @@
       console.log("Copied to clipboard: " + copyText.value);
 
       // show text feedback
-      var shareWidget = document.getElementById("share");
-      var feedback = document.createElement("span");
-      feedback.classList.add("ok-feedback");
-      var feedbackText = document.createTextNode("Copied!");
-      feedback.appendChild(feedbackText);
-      shareWidget.appendChild(feedback);
+      var copyButton = document.getElementById("copyPageLink");
+      copyButton.textContent = "Copied!";
 
       // hide text feedback after a few moments
       setInterval(function () {
-        feedback.remove();
+        copyButton.textContent = "Copy page link";
       }, 3000);
     }
   </script>
