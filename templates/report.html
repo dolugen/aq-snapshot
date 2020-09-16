@@ -12,7 +12,7 @@
     color: green;
   }
   .chart-wrapper {
-    width: 600px;
+    width: 800px;
     height: 400px;
   }
 </style>
@@ -24,10 +24,14 @@
   <h2>Here's Your Report for {{ place_name }}</h2>
   <div>
     <div class="w3-row">
-      <div class="w3-col m7">
-        <p>Insert stats here</p>
-      </div>
       <div class="w3-col m5">
+        {% for stats in stats_lines %}
+        <div class="w3-panel w3-pale-blue w3-leftbar w3-border-blue"">
+          <p>{{ stats|safe }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="w3-col m7">
         <div class="w3-right">
           <button class="w3-button w3-blue w3-hover-green">Download Report »</button>
           <button class="w3-button w3-blue w3-hover-green">Download Data »</button>
@@ -40,12 +44,12 @@
 
       <div class="w3-container w3-cell">
         <div class="chart-wrapper">
-          <canvas id="myChart" width="650" height="400"></canvas>
+          <canvas id="myChart" width="800" height="400"></canvas>
         </div>
       </div>
     
       <div class="w3-container w3-cell" style="padding-right: 0px;">
-        <div id="map" class="w3-right" style="width: 700px; height: 400px;"></div>
+        <div id="map" class="w3-right" style="width: 800px; height: 400px;"></div>
       </div>
     
     </div> 
@@ -61,7 +65,6 @@
     var ctx = document.getElementById("myChart");
     var myChart = new Chart(ctx, {
       type: "bar",
-      // placeholder data!
       data: {
         labels: [
           {% for avg in averages %}
@@ -76,36 +79,7 @@
               {{ avg.average }},
               {% endfor %}
             ],
-            // TODO: customize color based on the avg value
-            backgroundColor: [
-              "rgba(255, 99, 132, 0.2)",
-              "rgba(255, 99, 132, 0.2)",
-              "rgba(255, 206, 86, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(75, 192, 192, 0.2)",
-              "rgba(255, 206, 86, 0.2)",
-              "rgba(255, 99, 132, 0.2)",
-              "rgba(255, 99, 132, 0.2)",
-            ],
-            borderColor: [
-              "rgba(255, 99, 132, 1)",
-              "rgba(255, 99, 132, 1)",
-              "rgba(255, 206, 86, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(75, 192, 192, 1)",
-              "rgba(255, 206, 86, 1)",
-              "rgba(255, 99, 132, 1)",
-              "rgba(255, 99, 132, 1)",
-            ],
-            borderWidth: 1,
+            backgroundColor: "rgba(255, 99, 132, 1)",
           },
         ],
       },

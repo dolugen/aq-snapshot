@@ -3,8 +3,14 @@ from flask import Flask
 from flask import render_template
 from flask import request
 import requests
+import aqi
+
 
 app = Flask(__name__)
+
+# https://cfpub.epa.gov/airnow/index.cfm?action=aqibasics.aqi
+# Use moderate as threshold for OK AQI levels
+AQI_OK_THRESHOLD = 100
 
 MAPBOX_ACCESS_TOKEN = os.environ.get('MAPBOX_ACCESS_TOKEN')
 if not MAPBOX_ACCESS_TOKEN:
@@ -33,7 +39,8 @@ def get_averages(temporal='day', spatial='location', location=None, city=None, c
         'city': city,
         'location': location,
         'order_by': 'date',
-        'sort': 'asc'
+        'sort': 'asc',
+        'limit': 10000,
     }
     params = '&'.join([f'{k}={v}' for (k, v) in params.items() if v is not None])
     print(params)
@@ -66,6 +73,41 @@ def find_place_coordinates(name, place_type):
     '''
     pass
 
+def count_poor_aqi_intervals(averages):
+    poor_aqi_intervals = 0
+    for avg in averages:
+        try:
+            local_aqi = aqi.to_iaqi(aqi.POLLUTANT_PM25, avg['average'], algo=aqi.ALGO_EPA)
+        except IndexError:
+            # happens when the value is too high
+            # can count towards poor AQ
+            pass
+        if local_aqi > AQI_OK_THRESHOLD:
+            poor_aqi_intervals += 1
+    return poor_aqi_intervals
+
+def prepare_stats(averages, averaging_interval, locations):
+    # number of intervals below threshold
+    poor_aqi_intervals = count_poor_aqi_intervals(averages)
+    
+    percentage_of_poor_aqi_intervals = poor_aqi_intervals / len(averages) * 100
+
+    ceiling = max(averages, key=lambda a: a['average'])
+
+    total_data_points = sum([a['measurement_count'] for a in averages])
+
+    stats_lines = [
+        f"<span class='w3-large'>"
+        f"<b>{percentage_of_poor_aqi_intervals:.1f}%</b>"
+        f"</span> of {averaging_interval}s had poor air quality "
+        f"(according to EPA standards)",
+        f"The {averaging_interval} of <b>{ceiling['date']}</b> "
+        f"had the worst air with average PM 2.5 concentrations "
+        f"at <b>{ceiling['average']:.2f} µg/m³</b>",
+        f"There are <b>{len(locations)}</b> air quality sensor stations in this area",
+        f"Total of <b>{total_data_points}</b> measurements were collected during this time"
+    ]
+    return stats_lines
 
 @app.route('/')
 def index():
@@ -109,9 +151,12 @@ def report():
     # TODO: suffix place name with context (e.g. city_name, country_name)
     chart_title = f'{averaging_time.capitalize()}ly average PM2.5 for {place_name}'
 
+    stats_lines = prepare_stats(averages, averaging_time, locations)
+
     return render_template('report.html',
                             averages=averages,
                             locations=locations,
+                            stats_lines=stats_lines,
                             chart_title=chart_title,
                             place_name=place_name,
                             averaging_time=averaging_time,
