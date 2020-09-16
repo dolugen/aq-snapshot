@@ -37,6 +37,9 @@
           <button class="w3-button w3-blue w3-hover-green">Download Data »</button> -->
           <div id="share" style="display:inline">
             <button id="copyPageLink" onclick="copyLink()" class="w3-button w3-border">Copy page link</button>
+            <button class="w3-button w3-blue w3-hover-green w3-ripple">
+              <a id="shareTwitterLink" target="_blank" href="">
+                <i class="fa fa-twitter"></i> Share on Twitter</a></button>
             <input style="display:none" id="currentURL" readonly="readonly" />
           </div>
           <button class="w3-button w3-blue w3-hover-green"><a href="/resources">Learn More</a></button>
@@ -121,6 +124,13 @@
     });
 
     document.getElementById("currentURL").value = window.location.href;
+
+    // set the share twitter href
+    var shareTwitterLink = document.getElementById("shareTwitterLink");
+    var twitterTweetURL = "https://twitter.com/intent/tweet?text="
+    var shareText = `Check out this air quality report for {{ place_name }}. `;
+    shareText += encodeURIComponent(window.location.href);
+    shareTwitterLink.href = `${twitterTweetURL}${shareText}`;
 
     function copyLink() {
       /* Get the text field */
