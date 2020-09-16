@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 import requests
+import markdown
 import aqi
 
 
@@ -180,4 +181,6 @@ def report():
 
 @app.route('/resources')
 def resources():
-    return render_template('resources.html')
+    with open('content/resources.md') as md:
+        html = markdown.markdown(md.read(), extensions=['md_in_html'])
+        return render_template('resources.html', safe_content=html)

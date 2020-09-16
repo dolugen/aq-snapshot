@@ -2,4 +2,5 @@ gunicorn
 flask
 requests
 python-aqi
+markdown
 pytest
