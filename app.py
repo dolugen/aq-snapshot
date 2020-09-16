@@ -30,7 +30,14 @@ AVERAGES_URL = "https://api.openaq.org/beta/averages"
 LOCATIONS_URL = "https://api.openaq.org/v1/locations"
 
 
-def get_averages(temporal='day', spatial='location', location=None, city=None, country=None):
+def get_averages(
+    temporal='day',
+    spatial='location',
+    location=None,
+    city=None,
+    country=None,
+    date_from=None,
+    date_to=None):
     '''makes an API call to OpenAQ averages endpoint, and returns the results'''
     params = {
         'temporal': temporal,
@@ -38,6 +45,8 @@ def get_averages(temporal='day', spatial='location', location=None, city=None, c
         'country': country,
         'city': city,
         'location': location,
+        'date_from': date_from,
+        'date_to': date_to,
         'order_by': 'date',
         'sort': 'asc',
         'limit': 10000,
@@ -130,13 +139,15 @@ def report():
     if place_type == "country":
         zoom_level = 4
     
-    date_from = request.args.get('dateFrom')
-    date_to = request.args.get('dateTo')
+    date_from = request.args.get('dateFrom') or None
+    date_to = request.args.get('dateTo') or None
 
     # TODO: use date range here
     averages = get_averages(
         temporal=averaging_time, 
         spatial=place_type, 
+        date_from=date_from,
+        date_to=date_to,
         **{place_type: place_id or place_name})
     print(averages)
 
