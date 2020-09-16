@@ -142,21 +142,18 @@ def report():
     date_from = request.args.get('dateFrom') or None
     date_to = request.args.get('dateTo') or None
 
-    # TODO: use date range here
     averages = get_averages(
         temporal=averaging_time, 
         spatial=place_type, 
         date_from=date_from,
         date_to=date_to,
         **{place_type: place_id or place_name})
-    print(averages)
 
     if place_type == "country":
         locations = get_locations(country=place_id)
     # TODO: city name not unique?
     elif place_type == "city":
         locations = get_locations(city=place_name)
-    print(f'Got {len(locations)} locations')
 
     # TODO: other parameters will be available too
     # TODO: suffix place name with context (e.g. city_name, country_name)
