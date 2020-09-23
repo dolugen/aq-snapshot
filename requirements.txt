@@ -3,4 +3,5 @@ flask
 requests
 python-aqi
 markdown
+python-dotenv
 pytest
