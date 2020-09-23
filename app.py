@@ -37,6 +37,9 @@ possessive_lookup = {
     "year": "annual"
 }
 
+def create_url(base_url: str, params: dict) -> str:
+    pass
+
 
 def get_averages(
     temporal='day',
