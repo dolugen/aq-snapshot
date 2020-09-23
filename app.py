@@ -31,6 +31,12 @@ POLLUTANTS = [
 AVERAGES_URL = "https://api.openaq.org/beta/averages"
 LOCATIONS_URL = "https://api.openaq.org/v1/locations"
 
+possessive_lookup = {
+    "day": "daily",
+    "month": "monthly",
+    "year": "annual"
+}
+
 
 def get_averages(
     temporal='day',
@@ -171,7 +177,7 @@ def report():
 
     # TODO: other parameters will be available too
     # TODO: suffix place name with context (e.g. city_name, country_name)
-    chart_title = f'{averaging_time.capitalize()}ly average PM2.5 for {place_name}'
+    chart_title = f'{possessive_lookup.get(averaging_time).capitalize()} average PM2.5 for {place_name}'
 
     stats_lines = prepare_stats(averages, averaging_time, locations)
 
