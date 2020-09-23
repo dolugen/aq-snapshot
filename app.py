@@ -38,7 +38,10 @@ possessive_lookup = {
 }
 
 def create_url(base_url: str, params: dict) -> str:
-    pass
+    # skip None values
+    params = dict([(k, v) for (k, v) in params.items() if v is not None])
+    url_params = urllib.parse.urlencode(params)
+    return f'{base_url}?{url_params}'
 
 
 def get_averages(
@@ -62,10 +65,9 @@ def get_averages(
         'sort': 'asc',
         'limit': 10000,
     }
-    params = urllib.parse.urlencode(dict([(k, v) for (k, v) in params.items() if v is not None]))
-
-    print(f'{AVERAGES_URL}?{params}')
-    resp = requests.get(f'{AVERAGES_URL}?{params}')
+    url = create_url(AVERAGES_URL, params)
+    print(url)
+    resp = requests.get(url)
     averages = resp.json()["results"]
     return averages
 
@@ -77,12 +79,14 @@ def get_locations(country=None, city=None, location=None):
     params = {
         'country': country,
         'city': city,
-        'location': location
+        'location': location,
+        'has_geo': 'true',
+        'limit': 10000,
     }
-    params = urllib.parse.urlencode(dict([(k, v) for (k, v) in params.items() if v is not None]))
-    url = f'{LOCATIONS_URL}?{params}&has_geo=true&limit=10000'
+    url = create_url(LOCATIONS_URL, params)
     print(url)
     resp = requests.get(url)
+
     locations = resp.json()["results"]
     return locations
 
