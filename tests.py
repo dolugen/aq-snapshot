@@ -1,5 +1,6 @@
 import pytest
-from app import app, create_url
+from app import app, create_url, filter_active_stations
+from datetime import timedelta
 
 
 @pytest.fixture()
@@ -31,3 +32,27 @@ def test_create_url_value_with_spaces():
     )
     expected = "http://base.url?param1=1&param2=2&param3=string+with+spaces"
     assert expected == actual
+
+def test_filter_active_stations():
+    # partial response for locations
+    example_stations_list = [
+        {
+            "location": "Alpha",
+            "firstUpdated": "2017-09-13T21:00:00.000Z",
+            "lastUpdated": "2020-09-22T18:00:00.000Z",
+        },
+        {
+            "location": "Beta",
+            "firstUpdated": "2017-09-13T21:00:00.000Z",
+            "lastUpdated": "2017-09-22T18:00:00.000Z",
+        },
+        {
+            "location": "Gamma",
+            "firstUpdated": "2017-09-14T00:00:00.000Z",
+            "lastUpdated": "2020-09-22T18:00:00.000Z",
+        }
+    ]
+    oldness_threshold = timedelta(days=365)
+    active_stations = filter_active_stations(example_stations_list, oldness_threshold)
+    filter_active_stations([], 'test')
+    assert [s["location"] for s in active_stations] == ["Alpha", "Gamma"]
