@@ -1,4 +1,5 @@
 import os
+import urllib.parse
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -52,23 +53,24 @@ def get_averages(
         'sort': 'asc',
         'limit': 10000,
     }
-    params = '&'.join([f'{k}={v}' for (k, v) in params.items() if v is not None])
-    print(params)
+    params = urllib.parse.urlencode(dict([(k, v) for (k, v) in params.items() if v is not None]))
 
+    print(f'{AVERAGES_URL}?{params}')
     resp = requests.get(f'{AVERAGES_URL}?{params}')
     averages = resp.json()["results"]
     return averages
 
-def get_locations(country=None, city=None):
+def get_locations(country=None, city=None, location=None):
     '''
     makes an API call to OpenAQ locations endpoint
     and returns the results
     '''
     params = {
         'country': country,
-        'city': city
+        'city': city,
+        'location': location
     }
-    params = '&'.join([f'{k}={v}' for (k, v) in params.items() if v is not None])
+    params = urllib.parse.urlencode(dict([(k, v) for (k, v) in params.items() if v is not None]))
     url = f'{LOCATIONS_URL}?{params}&has_geo=true&limit=10000'
     print(url)
     resp = requests.get(url)
@@ -147,18 +149,25 @@ def report():
     date_from = request.args.get('dateFrom') or None
     date_to = request.args.get('dateTo') or None
 
+    # location and city uses names, country uses ISO code
+    place_filter = {place_type: place_name}
+    if place_type == "country":
+        place_filter[place_type] = place_id
+
     averages = get_averages(
         temporal=averaging_time, 
         spatial=place_type, 
         date_from=date_from,
         date_to=date_to,
-        **{place_type: place_id or place_name})
+        **place_filter)
 
     if place_type == "country":
         locations = get_locations(country=place_id)
     # TODO: city name not unique?
     elif place_type == "city":
         locations = get_locations(city=place_name)
+    elif place_type == "location":
+        locations = get_locations(location=place_name)
 
     # TODO: other parameters will be available too
     # TODO: suffix place name with context (e.g. city_name, country_name)
