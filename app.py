@@ -1,4 +1,6 @@
+from datetime import timedelta, datetime
 import os
+from typing import Dict, List
 import urllib.parse
 from flask import Flask
 from flask import render_template
@@ -13,6 +15,9 @@ app = Flask(__name__)
 # https://cfpub.epa.gov/airnow/index.cfm?action=aqibasics.aqi
 # Use moderate as threshold for OK AQI levels
 AQI_OK_THRESHOLD = 100
+
+# used to filter out inactive stations
+STATION_INACTIVITY_THRESHOLD_IN_DAYS = 365
 
 MAPBOX_ACCESS_TOKEN = os.environ.get('MAPBOX_ACCESS_TOKEN')
 if not MAPBOX_ACCESS_TOKEN:
@@ -42,6 +47,12 @@ def create_url(base_url: str, params: dict) -> str:
     params = dict([(k, v) for (k, v) in params.items() if v is not None])
     url_params = urllib.parse.urlencode(params)
     return f'{base_url}?{url_params}'
+
+def filter_active_stations(stations_list: List[Dict], oldness_threshold: timedelta) -> List[Dict]:
+    def is_recent(station: Dict) -> bool:
+        last_updated = datetime.strptime(station["lastUpdated"], "%Y-%m-%dT%H:%M:%S.%fZ")
+        return datetime.now() - last_updated < oldness_threshold
+    return filter(is_recent, stations_list)
 
 
 def get_averages(
@@ -181,6 +192,8 @@ def report():
         locations = get_locations(city=place_name)
     elif place_type == "location":
         locations = get_locations(location=place_name)
+    
+    locations = list(filter_active_stations(locations, timedelta(days=STATION_INACTIVITY_THRESHOLD_IN_DAYS)))
 
     # TODO: other parameters will be available too
     # TODO: suffix place name with context (e.g. city_name, country_name)
