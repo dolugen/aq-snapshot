@@ -1,14 +1,27 @@
 import pytest
-from app import app
+from app import app, create_url
 
 
 @pytest.fixture()
 def client():
-    app.config['TESTING'] = True
+    app.config["TESTING"] = True
     return app.test_client()
 
 
-def test_hello(client):
-    response = client.get('/')
+def test_index(client):
+    response = client.get("/")
     assert response.status_code
-    assert response.data == b'Hello, World!'
+
+
+def test_create_url():
+    actual = create_url("http://base.url", {"param1": 1, "param2": 2, "param3": None})
+    expected = "http://base.url?param1=1&param2=2"
+    assert expected == actual
+
+
+def test_create_url_value_with_spaces():
+    actual = create_url(
+        "http://base.url", {"param1": 1, "param2": 2, "param3": "string with spaces"}
+    )
+    expected = "http://base.url?param1=1&param2=2&param3=string+with+spaces"
+    assert expected == actual
