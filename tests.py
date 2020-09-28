@@ -1,5 +1,5 @@
 import pytest
-from app import app, create_url, filter_active_stations
+from app import app, create_url, filter_active_stations, get_stat_number_of_stations
 from datetime import timedelta
 
 
@@ -56,3 +56,10 @@ def test_filter_active_stations():
     active_stations = filter_active_stations(example_stations_list, oldness_threshold)
     filter_active_stations([], 'test')
     assert [s["location"] for s in active_stations] == ["Alpha", "Gamma"]
+
+def test_get_stat_number_of_stations_one_or_less():
+    assert get_stat_number_of_stations(0) == "There is <b>0</b> government air quality monitoring station in this area"
+    assert get_stat_number_of_stations(1) == "There is <b>1</b> government air quality monitoring station in this area"
+
+def test_get_stat_number_of_stations_more_than_one():
+    assert get_stat_number_of_stations(2) == "There are <b>2</b> government air quality monitoring stations in this area"

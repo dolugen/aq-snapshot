@@ -122,6 +122,15 @@ def count_poor_aqi_intervals(averages):
             poor_aqi_intervals += 1
     return poor_aqi_intervals
 
+def get_stat_number_of_stations(stations_count: int) -> str:
+    return (
+        f'There {"is" if stations_count <=1 else "are"} '
+        f'<b>{stations_count}</b> '
+        'government air quality monitoring '
+        f'{"station" if stations_count <= 1 else "stations"} '
+        'in this area'
+    )
+
 def prepare_stats(averages, averaging_interval, locations):
     # some places might not have averages ready
     if not averages:
@@ -130,22 +139,19 @@ def prepare_stats(averages, averaging_interval, locations):
     # number of intervals below threshold
     poor_aqi_intervals = count_poor_aqi_intervals(averages)
     
-    percentage_of_poor_aqi_intervals = poor_aqi_intervals / len(averages) * 100
-
     ceiling = max(averages, key=lambda a: a['average'])
 
     total_data_points = sum([a['measurement_count'] for a in averages])
 
     stats_lines = [
-        f"<span class='w3-large'>"
-        f"<b>{percentage_of_poor_aqi_intervals:.1f}%</b>"
-        f"</span> of {averaging_interval}s had poor air quality "
+        f"<span class='w3-large'><b>{poor_aqi_intervals}</b></span> "
+        f"{averaging_interval}{'s' if poor_aqi_intervals != 1 else ''} had poor air quality "
         f"(according to EPA standards)",
         f"The {averaging_interval} of <b>{ceiling['date']}</b> "
         f"had the worst air with average PM 2.5 concentrations "
         f"at <b>{ceiling['average']:.2f} µg/m³</b>",
-        f"There are <b>{len(locations)}</b> air quality sensor stations in this area",
-        f"Total of <b>{total_data_points}</b> measurements were collected during this time"
+        get_stat_number_of_stations(len(locations)),
+        f"<b>{total_data_points}</b> measurements were collected during this time"
     ]
     return stats_lines
 
