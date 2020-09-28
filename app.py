@@ -139,16 +139,13 @@ def prepare_stats(averages, averaging_interval, locations):
     # number of intervals below threshold
     poor_aqi_intervals = count_poor_aqi_intervals(averages)
     
-    percentage_of_poor_aqi_intervals = poor_aqi_intervals / len(averages) * 100
-
     ceiling = max(averages, key=lambda a: a['average'])
 
     total_data_points = sum([a['measurement_count'] for a in averages])
 
     stats_lines = [
-        f"<span class='w3-large'>"
-        f"<b>{percentage_of_poor_aqi_intervals:.1f}%</b>"
-        f"</span> of {averaging_interval}s had poor air quality "
+        f"<span class='w3-large'><b>{poor_aqi_intervals}</b></span> "
+        f"{averaging_interval}{'s' if poor_aqi_intervals != 1 else ''} had poor air quality "
         f"(according to EPA standards)",
         f"The {averaging_interval} of <b>{ceiling['date']}</b> "
         f"had the worst air with average PM 2.5 concentrations "
