@@ -1,14 +1,12 @@
-from datetime import timedelta, datetime
 import os
-from typing import Dict, List
 import urllib.parse
-from flask import Flask
-from flask import render_template
-from flask import request
-import requests
-import markdown
-import aqi
+from datetime import datetime, timedelta
+from typing import Dict, List
 
+import aqi
+import markdown
+import requests
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -190,6 +188,13 @@ def report():
         date_from=date_from,
         date_to=date_to,
         **place_filter)
+    
+    # set actual date range based on found results
+    # the results are sorted by date in ascending order already
+    if len(averages) > 1:
+        date_from, date_to = averages[0]['date'], averages[-1]['date']
+    
+    # TODO: if there are no averages found, show a message on the result page?
 
     if place_type == "country":
         locations = get_locations(country=place_id)
