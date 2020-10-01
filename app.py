@@ -1,18 +1,27 @@
+import enum
 import os
 import urllib.parse
 from datetime import datetime, timedelta
-from typing import Dict, List
+from typing import Dict, List, Sequence
 
-import aqi
 import markdown
 import requests
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-# https://cfpub.epa.gov/airnow/index.cfm?action=aqibasics.aqi
-# Use moderate as threshold for OK AQI levels
-AQI_OK_THRESHOLD = 100
+class AveragingInterval(enum.Enum):
+    day = "day"
+    month = "month"
+    year = "year"
+
+WHO_GUIDELINES_URL = "https://www.who.int/en/news-room/fact-sheets/detail/ambient-(outdoor)-air-quality-and-health"
+# see above URL for thresholds
+PM25_OK_THRESHOLDS = {
+    AveragingInterval.day: 25, # μg/m3
+    AveragingInterval.month: 25, # μg/m3
+    AveragingInterval.year: 10, # μg/m3
+}
 
 # used to filter out inactive stations
 STATION_INACTIVITY_THRESHOLD_IN_DAYS = 365
@@ -35,9 +44,9 @@ AVERAGES_URL = "https://api.openaq.org/beta/averages"
 LOCATIONS_URL = "https://api.openaq.org/v1/locations"
 
 possessive_lookup = {
-    "day": "daily",
-    "month": "monthly",
-    "year": "annual"
+    AveragingInterval.day: "daily",
+    AveragingInterval.month: "monthly",
+    AveragingInterval.year: "annual"
 }
 
 def create_url(base_url: str, params: dict) -> str:
@@ -54,7 +63,7 @@ def filter_active_stations(stations_list: List[Dict], oldness_threshold: timedel
 
 
 def get_averages(
-    temporal='day',
+    temporal=AveragingInterval.day,
     spatial='location',
     location=None,
     city=None,
@@ -63,7 +72,7 @@ def get_averages(
     date_to=None):
     '''makes an API call to OpenAQ averages endpoint, and returns the results'''
     params = {
-        'temporal': temporal,
+        'temporal': temporal.value,
         'spatial': spatial,
         'country': country,
         'city': city,
@@ -80,7 +89,7 @@ def get_averages(
     averages = resp.json()["results"]
     return averages
 
-def get_locations(country=None, city=None, location=None):
+def get_locations(country: str=None, city: str=None, location: str=None) -> List[dict]:
     '''
     makes an API call to OpenAQ locations endpoint
     and returns the results
@@ -107,18 +116,10 @@ def find_place_coordinates(name, place_type):
     '''
     pass
 
-def count_poor_aqi_intervals(averages):
-    poor_aqi_intervals = 0
-    for avg in averages:
-        try:
-            local_aqi = aqi.to_iaqi(aqi.POLLUTANT_PM25, avg['average'], algo=aqi.ALGO_EPA)
-        except IndexError:
-            # happens when the value is too high
-            # can count towards poor AQ
-            pass
-        if local_aqi > AQI_OK_THRESHOLD:
-            poor_aqi_intervals += 1
-    return poor_aqi_intervals
+def count_poor_pm25_intervals(averages: Sequence[dict], interval: AveragingInterval, thresholds=PM25_OK_THRESHOLDS) -> int:
+    threshold = thresholds[interval]
+    above_threshold_averages = filter(lambda average: average['average'] > threshold, averages)
+    return len(list(above_threshold_averages))
 
 def get_stat_number_of_stations(stations_count: int) -> str:
     return (
@@ -129,23 +130,23 @@ def get_stat_number_of_stations(stations_count: int) -> str:
         'in this area'
     )
 
-def prepare_stats(averages, averaging_interval, locations):
+def prepare_stats(averages: Sequence[dict], averaging_interval: AveragingInterval, locations):
     # some places might not have averages ready
     if not averages:
         return []
 
-    # number of intervals below threshold
-    poor_aqi_intervals = count_poor_aqi_intervals(averages)
+    # number of intervals above threshold
+    poor_aq_intervals = count_poor_pm25_intervals(averages, averaging_interval)
     
     ceiling = max(averages, key=lambda a: a['average'])
 
     total_data_points = sum([a['measurement_count'] for a in averages])
 
     stats_lines = [
-        f"<span class='w3-large'><b>{poor_aqi_intervals}</b></span> "
-        f"{averaging_interval}{'s' if poor_aqi_intervals != 1 else ''} had poor air quality "
-        f"(according to EPA standards)",
-        f"The {averaging_interval} of <b>{ceiling['date']}</b> "
+        f"<span class='w3-large'><b>{poor_aq_intervals}</b></span> "
+        f"{averaging_interval.value}{'s' if poor_aq_intervals != 1 else ''} had poor air quality "
+        f"(according to <a target='_blank' href='{WHO_GUIDELINES_URL}'>WHO guidelines</a>)",
+        f"The {averaging_interval.value} of <b>{ceiling['date']}</b> "
         f"had the worst air with average PM 2.5 concentrations "
         f"at <b>{ceiling['average']:.2f} µg/m³</b>",
         get_stat_number_of_stations(len(locations)),
@@ -163,8 +164,7 @@ def report():
     place_type = request.args.get('placeType')
     place_id = request.args.get('placeID')
     assert place_type in ["country", "city", "location"]
-    averaging_time = request.args.get('temporal')
-    assert averaging_time in ["year", "month", "day"]
+    averaging_interval = AveragingInterval(request.args.get('temporal'))
 
     pollutants = {}
     for pollutant, _ in POLLUTANTS: 
@@ -183,7 +183,7 @@ def report():
         place_filter[place_type] = place_id
 
     averages = get_averages(
-        temporal=averaging_time, 
+        temporal=averaging_interval, 
         spatial=place_type, 
         date_from=date_from,
         date_to=date_to,
@@ -208,9 +208,9 @@ def report():
 
     # TODO: other parameters will be available too
     # TODO: suffix place name with context (e.g. city_name, country_name)
-    chart_title = f'{possessive_lookup.get(averaging_time).capitalize()} average PM2.5 for {place_name}'
+    chart_title = f'{possessive_lookup[averaging_interval].capitalize()} average PM2.5 for {place_name}'
 
-    stats_lines = prepare_stats(averages, averaging_time, locations)
+    stats_lines = prepare_stats(averages, averaging_interval, locations)
 
     return render_template('report.html',
                             averages=averages,
@@ -218,7 +218,7 @@ def report():
                             stats_lines=stats_lines,
                             chart_title=chart_title,
                             place_name=place_name,
-                            averaging_time=averaging_time,
+                            averaging_time=averaging_interval.value,
                             pollutants=pollutants,
                             date_from=date_from,
                             date_to=date_to,

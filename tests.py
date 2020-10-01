@@ -1,5 +1,5 @@
 import pytest
-from app import app, create_url, filter_active_stations, get_stat_number_of_stations
+from app import AveragingInterval, app, count_poor_pm25_intervals, create_url, filter_active_stations, get_stat_number_of_stations
 from datetime import timedelta
 
 
@@ -63,3 +63,17 @@ def test_get_stat_number_of_stations_one_or_less():
 
 def test_get_stat_number_of_stations_more_than_one():
     assert get_stat_number_of_stations(2) == "There are <b>2</b> government air quality monitoring stations in this area"
+
+def test_count_poor_pm25_intervals():
+    averages = [
+        {'average': 1},
+        {'average': 5},
+        {'average': 15},
+        {'average': 20},
+        {'average': 30},
+        {'average': 100},
+    ]
+    assert count_poor_pm25_intervals(averages, AveragingInterval.day) == 2
+    assert count_poor_pm25_intervals(averages, AveragingInterval.month) == 2
+    assert count_poor_pm25_intervals(averages, AveragingInterval.year) == 4
+    assert count_poor_pm25_intervals([], AveragingInterval.day) == 0
