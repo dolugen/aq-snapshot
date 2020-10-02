@@ -217,6 +217,7 @@ def report():
                             locations=locations,
                             stats_lines=stats_lines,
                             chart_title=chart_title,
+                            who_threshold_value=PM25_OK_THRESHOLDS[averaging_interval],
                             place_name=place_name,
                             averaging_time=averaging_interval.value,
                             pollutants=pollutants,
