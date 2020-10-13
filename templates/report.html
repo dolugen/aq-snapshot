@@ -37,12 +37,15 @@
           <button class="w3-button w3-blue w3-hover-green">Download Data »</button> -->
           <div id="share" style="display:inline">
             <button id="copyPageLink" onclick="copyLink()" class="w3-button w3-border">Copy page link</button>
-            <button class="w3-button w3-blue w3-hover-green w3-ripple">
-              <a id="shareTwitterLink" target="_blank" href="">
-                <i class="fa fa-twitter"></i> Share on Twitter</a></button>
+            <a id="shareTwitterLink" target="_blank" href="" class="w3-button w3-blue w3-hover-green w3-ripple">
+              <i class="fa fa-twitter"></i> Share on Twitter
+            </a>
+            <a id="shareFacebookLink" class="w3-button w3-blue w3-hover-green w3-ripple" href="" target="_blank">
+              <i class="fa fa-facebook"></i> Share on Facebook
+            </a>
             <input style="display:none" id="currentURL" readonly="readonly" />
           </div>
-          <button class="w3-button w3-blue w3-hover-green"><a href="/resources">Learn More</a></button>
+          <a class="w3-button w3-blue w3-hover-green" href="/resources">Learn More</a></button>
         </div>
       </div>
     </div> 
@@ -151,6 +154,11 @@
     var shareText = `Check out this air quality report for {{ place_name }}. `;
     shareText += encodeURIComponent(window.location.href);
     shareTwitterLink.href = `${twitterTweetURL}${shareText}`;
+
+    // set share facebook href
+    var shareFacebookLink = document.getElementById("shareFacebookLink");
+    var facebookShareURL = "https://www.facebook.com/sharer.php?u=" + encodeURIComponent(window.location.href);
+    shareFacebookLink.href = facebookShareURL;
 
     function copyLink() {
       /* Get the text field */
