@@ -9,7 +9,7 @@
 <meta property="og:type"          content="website" />
 <meta property="og:title"         content="Air Quality Snapshot for {{ place_name }} {{ date_from }} to {{ date_to }}" />
 <meta property="og:description"   content="Air Quality Snapshot by OpenAQ" />
-<!-- <meta property="og:image"         content="https://DOMAIN/path/image.jpg" /> -->
+<meta property="og:image"         content="{{ url_for('static', filename='air-quality-snapshot.png')}}" />
 <style>
   .ok-feedback {
     color: green;
