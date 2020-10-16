@@ -9,7 +9,6 @@ import requests
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
-app.config['SERVER_NAME'] = 'air-quality-snapshot.herokuapp.com'
 
 class AveragingInterval(enum.Enum):
     day = "day"
@@ -214,7 +213,7 @@ def report():
     stats_lines = prepare_stats(averages, averaging_interval, locations)
 
     # for OpenGraph URL
-    page_url = f"{app.config['SERVER_NAME']}/report?{urllib.parse.urlencode(request.args)}"
+    page_url = f"/report?{urllib.parse.urlencode(request.args)}"
 
     return render_template('report.html',
                             averages=averages,
