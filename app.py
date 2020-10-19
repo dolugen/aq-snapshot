@@ -51,7 +51,7 @@ possessive_lookup = {
     AveragingInterval.year: "annual"
 }
 
-def create_url(base_url: str, params: dict) -> str:
+def create_url(base_url: str, **params: dict) -> str:
     # skip None values
     params = dict([(k, v) for (k, v) in params.items() if v is not None])
     url_params = urllib.parse.urlencode(params)
@@ -64,7 +64,7 @@ def filter_active_stations(stations_list: List[Dict], oldness_threshold: timedel
     return filter(is_recent, stations_list)
 
 
-def get_averages(
+def build_averages_url(
     temporal=AveragingInterval.day,
     spatial='location',
     location=None,
@@ -85,11 +85,9 @@ def get_averages(
         'sort': 'asc',
         'limit': 10000,
     }
-    url = create_url(AVERAGES_URL, params)
+    url = create_url(AVERAGES_URL, **params)
     print(url)
-    resp = requests.get(url)
-    averages = resp.json()["results"]
-    return averages
+    return url
 
 def get_locations(country: str=None, city: str=None, location: str=None) -> List[dict]:
     '''
@@ -103,7 +101,7 @@ def get_locations(country: str=None, city: str=None, location: str=None) -> List
         'has_geo': 'true',
         'limit': 10000,
     }
-    url = create_url(LOCATIONS_URL, params)
+    url = create_url(LOCATIONS_URL, **params)
     print(url)
     resp = requests.get(url)
 
@@ -184,12 +182,13 @@ def report():
     if place_type == "country":
         place_filter[place_type] = place_id
 
-    averages = get_averages(
+    averages_url = build_averages_url(
         temporal=averaging_interval, 
         spatial=place_type, 
         date_from=date_from,
         date_to=date_to,
         **place_filter)
+    averages = requests.get(averages_url).json()['results']
     
     # set actual date range based on found results
     # the results are sorted by date in ascending order already
@@ -215,7 +214,8 @@ def report():
     stats_lines = prepare_stats(averages, averaging_interval, locations)
 
     # for OpenGraph URL
-    page_url = f"{app.config['SERVER_NAME']}/report?{urllib.parse.urlencode(request.args)}"
+    page_url = f"/report?{urllib.parse.urlencode(request.args)}"
+    csv_download_url = f"{averages_url}&format=csv"
 
     return render_template('report.html',
                             averages=averages,
@@ -230,7 +230,8 @@ def report():
                             date_to=date_to,
                             map_zoom_level=zoom_level,
                             mapbox_access_token=MAPBOX_ACCESS_TOKEN,
-                            page_url=page_url)
+                            page_url=page_url,
+                            csv_download_url=csv_download_url)
 
 @app.route('/resources')
 def resources():
