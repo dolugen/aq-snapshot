@@ -9,8 +9,6 @@ import requests
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
-if not app.config['DEBUG']:
-    app.config['SERVER_NAME'] = 'air-quality-snapshot.herokuapp.com'
 
 class AveragingInterval(enum.Enum):
     day = "day"

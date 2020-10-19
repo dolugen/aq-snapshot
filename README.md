@@ -32,6 +32,69 @@ Your app should now be running on [localhost:5000](http://localhost:5000/).
 $ pytest tests.py
 ```
 
+## Deploying to AWS Elastic Beanstalk
+
+**Prerequisites: Python 3.7.9, pip, and awsebcli**
+
+You also need your AWS credentials ready in your `~/.aws/credentials` file.
+
+### Initialize new EB app
+
+When starting a new deployment, run:
+
+```
+eb init
+```
+
+The command will start an interactive session where you:
+
+- Enter the app name
+- Choose Python version to use
+- Choose AWS region
+
+### Create new environment for deployment
+
+This will create a new environment, and deploy the app there.
+
+```
+eb create env-name
+```
+
+### Open deployment
+
+Once deployed, open the app in a browser window:
+
+```
+eb open
+```
+
+### Set environment variables
+
+You can set configuration values such as `MAPBOX_ACCESS_TOKEN` using:
+
+```
+eb setenv KEY=value KEY2=value2
+```
+
+### Monitoring deployment
+
+Here are some helpful commands to monitor your deployment:
+
+```sh
+# show health status of envs
+eb health
+
+# show logs
+eb logs
+
+# print environment variables
+eb printenv
+
+# shows environment status and info
+eb status
+```
+
+
 ## Deploying to Heroku
 
 ```sh
