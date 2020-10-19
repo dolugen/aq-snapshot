@@ -18,7 +18,7 @@ def test_create_url():
     '''
     The result URL ignores None param values
     '''
-    actual = create_url("http://base.url", {"param1": 1, "param2": 2, "param3": None})
+    actual = create_url("http://base.url", **{"param1": 1, "param2": 2, "param3": None})
     expected = "http://base.url?param1=1&param2=2"
     assert expected == actual
 
@@ -28,7 +28,7 @@ def test_create_url_value_with_spaces():
     Handle white spaces in values nicely
     '''
     actual = create_url(
-        "http://base.url", {"param1": 1, "param2": 2, "param3": "string with spaces"}
+        "http://base.url", **{"param1": 1, "param2": 2, "param3": "string with spaces"}
     )
     expected = "http://base.url?param1=1&param2=2&param3=string+with+spaces"
     assert expected == actual
