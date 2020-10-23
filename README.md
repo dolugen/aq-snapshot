@@ -1,32 +1,38 @@
-# Flask Starter App
-
-A barebones Flask app, which can easily be deployed to Heroku.
-
-This is a template repository, you can [generate your own](https://github.com/dolugen/flask-starter/generate) from this.
-
-Adapted from [heroku/python-getting-started](https://github.com/heroku/python-getting-started).
-
-
-![Heroku and Flask](header.png)
+# openaq-snapshot
 
 ## Running Locally
 
 Make sure you have Python 3.7 [installed locally](http://install.python-guide.org). To push to Heroku, you'll need to install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli).
 
 ```sh
-$ git clone https://github.com/dolugen/flask-starter.git
-$ cd flask-starter
+$ git clone https://github.com/openaq/openaq-snapshot.git
+$ cd openaq-snapshot
 
-$ python3 -m venv env
-$ source ./env/bin/activate
-$ pip install -r requirements.txt
-
-$ heroku local
+$ pipenv install
+$ pipenv shell
+$ flask run
 ```
 
 Your app should now be running on [localhost:5000](http://localhost:5000/).
 
+You can also install the dependencies without `pipenv`:
+```
+$ python3 -m venv env
+$ source ./env/bin/activate
+$ pip install -r requirements.txt
+```
+
+**After you update the Pipfile and Pipfile.lock files, update the `requirements.txt` with:**
+
+```
+$ pip freeze > requirements.txt
+```
+
+`requirements.txt` is used for deploying to AWS Elastic Beanstalk.
+
 ## Testing
+
+Make sure you have `pytest` installed.
 
 ```
 $ pytest tests.py
